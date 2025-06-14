@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +24,7 @@ public class OpenAiService {
     private String organizationId;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
 
     public String getChatResponse(String userMessage) throws Exception {
         URL url = new URL(apiUrl);
