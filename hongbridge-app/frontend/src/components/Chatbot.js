@@ -1,6 +1,8 @@
-// src/components/Chatbot.js
 import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 import './Chatbot.css';
+
+axios.defaults.baseURL = 'http://localhost:8080';
 
 export default function Chatbot() {
   const [messages, setMessages] = useState([
@@ -9,13 +11,24 @@ export default function Chatbot() {
   const [input, setInput] = useState('');
   const chatEndRef = useRef(null);
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    console.log("보내는 메시지:", input);
+    console.log("요청 URL:", '/chat');
     if (!input.trim()) return;
     const userMessage = { sender: 'user', text: input };
-    const botReply = { sender: 'bot', text: '죄송해요, 아직 답변 로직은 없어요!' };
-
-    setMessages([...messages, userMessage, botReply]);
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
+
+    try {
+      const response = await axios.post('/chat', { message: input }); // ✅ Spring API 호출
+      const botMessage = { sender: 'bot', text: response.data };
+      setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      setMessages(prev => [
+        ...prev,
+        { sender: 'bot', text: '⚠️ 오류가 발생했습니다. 다시 시도해주세요.' }
+      ]);
+    }
   };
 
   useEffect(() => {
